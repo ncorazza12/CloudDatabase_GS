@@ -56,7 +56,7 @@ with t1:
                                map_style="carto-positron", center={"lat": -22.4, "lon": -48.6}, zoom=5.3,
                                opacity=0.8, height=620, **kw)
     fig.update_layout(margin=dict(l=0, r=0, t=0, b=0))
-    st.plotly_chart(fig, use_container_width=True)
+    st.plotly_chart(fig, width="stretch")
     st.caption("Municípios em branco estão fora do escopo (sem série ERA5 baixada) ou foram filtrados.")
     perfil = d.groupby("cluster_txt").agg(municipios=("cod_ibge", "count"), chuva_anual_mm=("chuva_media_anual_mm", "mean"),
                                           dias_ge50_ano=("dias_ge50_ano", "mean"), pop_mediana=("populacao_2022", "median"),
@@ -78,11 +78,11 @@ with t3:
     mes = pf.groupby("mes").agg(eventos=("n_eventos", "sum"), dias_ge50mm=("dias_ge50mm", "sum")).reset_index()
     mes["eventos_por_100_dias_ge50"] = (100 * mes["eventos"] / mes["dias_ge50mm"]).round(1)
     a, b = st.columns(2)
-    a.plotly_chart(px.bar(ano, x="ano", y="eventos", title="Eventos registrados por ano"), use_container_width=True)
-    b.plotly_chart(px.bar(ano, x="ano", y="dias_ge50mm", title="Dias-município com chuva >= 50 mm (ERA5)"), use_container_width=True)
+    a.plotly_chart(px.bar(ano, x="ano", y="eventos", title="Eventos registrados por ano"), width="stretch")
+    b.plotly_chart(px.bar(ano, x="ano", y="dias_ge50mm", title="Dias-município com chuva >= 50 mm (ERA5)"), width="stretch")
     c, f = st.columns(2)
-    c.plotly_chart(px.bar(mes, x="mes", y="eventos", title="Eventos por mês do ano"), use_container_width=True)
-    f.plotly_chart(px.bar(mes, x="mes", y="eventos_por_100_dias_ge50", title="Eventos por 100 dias >= 50 mm, por mês"), use_container_width=True)
+    c.plotly_chart(px.bar(mes, x="mes", y="eventos", title="Eventos por mês do ano"), width="stretch")
+    f.plotly_chart(px.bar(mes, x="mes", y="eventos_por_100_dias_ge50", title="Eventos por 100 dias >= 50 mm, por mês"), width="stretch")
 
 with t4:
     pf2 = pf.assign(faixa=pd.cut(pf["chuva_max_dia_mm"], [0, 20, 50, 100, 1000], right=False,
@@ -91,10 +91,10 @@ with t4:
     taxa["taxa_pct"] = (100 * taxa["com_evento"] / taxa["meses"]).round(2)
     st.plotly_chart(px.bar(taxa, x="faixa", y="taxa_pct", text="com_evento",
                            title="% de município-meses com evento por chuva máxima diária (rótulo = nº com evento)"),
-                    use_container_width=True)
+                    width="stretch")
     st.plotly_chart(px.histogram(ef.dropna(subset=["pct_acc7"]), x="pct_acc7", nbins=20,
                                  title="Percentil da chuva de 7 dias no dia do evento (frente ao histórico do município)"),
-                    use_container_width=True)
+                    width="stretch")
     st.caption("A faixa >= 100 mm tem poucos casos: a taxa é estatisticamente frágil.")
 
 with t5:
