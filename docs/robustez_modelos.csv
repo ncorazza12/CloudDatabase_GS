@@ -1,0 +1,7 @@
+﻿variante,modelo,PR_AUC,ROC_AUC,recall_top5pct,recall_top10pct,positivos_treino
+completo,Logística,0.032,0.884,0.476,0.667,99
+completo,Random Forest,0.012,0.891,0.381,0.571,99
+treino sem 2013,Logística,0.03,0.902,0.476,0.762,51
+treino sem 2013,Random Forest,0.013,0.867,0.286,0.714,51
+sem sazonalidade,Logística,0.039,0.92,0.524,0.667,99
+sem sazonalidade,Random Forest,0.013,0.897,0.524,0.619,99
