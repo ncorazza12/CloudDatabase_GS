@@ -28,7 +28,8 @@ Projeto: chuvas extremas e desastres no estado de SP (2013-2025). Baixado/proces
 `docs/manifesto_bronze.csv` guarda o SHA256 de cada arquivo da Bronze. Cada download tem um `.meta.json` (url, baixado_em_utc, bytes, sha256). Os JSONs da Open-Meteo embutem `_meta`.
 
 ## Limitação de escopo
-A cota diária da Open-Meteo esgotou: foram baixados 293 dos 645 municípios (Adamantina a Jumirim, ordem do código IBGE), mais 2 estações. A amostra **não é aleatória** e cobre 135 dos 339 registros do Atlas (39,8%). Faltam 352 municípios e 41 estações. O pipeline é idempotente: baixar o restante e reexecutar os scripts 07, 08, 10, 12 e 13.
+A cota diária da Open-Meteo esgotou: foram baixados 293 dos 645 municípios (Adamantina a Jumirim, ordem do código IBGE), mais 2 estações (A729 e C891; a C891 foi baixada antes de ser excluída e não entra nas análises). A amostra **não é aleatória** e cobre 135 dos 339 registros do Atlas (39,8%). Faltam 352 municípios e 41 estações. O pipeline é idempotente: baixar o restante e reexecutar os scripts 07, 08, 10, 12 e 13.
 
 ## Licenças
 A Open-Meteo é gratuita para uso não comercial; a atribuição CC BY 4.0 vem de fontes secundárias (não confirmada no site oficial). Licenças do Atlas, INMET e IBGE: não verificadas neste projeto.
+
