@@ -75,3 +75,13 @@ Scripts em `src/`, executados da raiz do repositório: 01 a 05 (Atlas, INMET, IB
 - Escopo de 293 municípios por limite de cota da API; amostra não aleatória.
 - 214 células ERA5 distintas para 293 municípios.
 - Camadas em disco local; apenas o Gold foi publicado em tabela Delta no Databricks (`workspace.default.gold_municipio_mes`).
+
+## Proposta de evolução para nuvem (não implementada)
+
+Hoje Bronze, Silver e Gold ficam em disco local; só o Gold foi publicado em nuvem, como tabela Delta (`workspace.default.gold_municipio_mes`) no Databricks Free Edition. Uma evolução possível:
+- **Bronze** em armazenamento de objetos (por exemplo, um Volume do Unity Catalog), mantendo os arquivos originais, o `.meta.json` e o manifesto SHA256.
+- **Silver e Gold** como tabelas Delta governadas por catálogo, com histórico de versões (já observado no `DESCRIBE HISTORY` do Gold).
+- **Atualização** por job agendado que reexecuta os scripts em ordem. O pipeline já é idempotente, então a carga dos municípios restantes não exigiria mudança de lógica.
+- **Dashboard** lendo a tabela Gold, em vez de arquivos locais.
+
+Esta seção descreve um desenho. Não foi testada, e a Free Edition tem limites (somente serverless, só Python e SQL).
