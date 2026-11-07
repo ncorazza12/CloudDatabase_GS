@@ -24,7 +24,7 @@ pip install -r requirements.txt
 ```
 
 Executar da raiz, nesta ordem:
-1. `src\01_atlas_silver.py` (lê o XLSX do Atlas colocado em `data\bronze\atlas_desastres\`)
+1. `src\01_atlas_silver.py` (lê o XLSX do Atlas, baixado manualmente do Atlas Digital de Desastres e colocado em `data\bronze\atlas_desastres\`; URL no catálogo)
 2. `src\02_inmet_estacoes_sp.py`, `src\03_inmet_chuva_diaria.py` (ZIPs do INMET em `data\bronze\inmet\`)
 3. `src\04_ibge_bronze.py`, `src\05_municipios_pontos.py`
 4. `src\06_open_meteo_bronze.py` (idempotente; respeita a cota diária da API)
@@ -39,4 +39,5 @@ Atlas Digital de Desastres (BD_Atlas_1991_2025_v1.1), INMET dados históricos (b
 
 ## Spark
 Notebook executado no Databricks Free Edition (serverless): recalculou o Gold (45.708 linhas, 120 positivos, 135 eventos, igual ao pandas) e salvou a tabela Delta `workspace.default.gold_municipio_mes`.
+
 
