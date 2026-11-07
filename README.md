@@ -10,6 +10,7 @@ Trabalho individual de Cloud Database (Global Solution 2026.2). Pipeline Medalli
 - `docs/02_catalogo_dados.md`: fontes e qualidade
 - `docs/03_arquitetura.md`: diagrama Medallion e fluxo
 - `docs/04_features_indicadores.md`: features, indicadores e análises
+- `docs/05_experimentacao_spark.md`: registro da experimentação em Spark/Databricks
 - `docs/Relatorio_Executivo_CitizenTech.docx`: diagnóstico e recomendações
 - `Evidencias/`: prints do dashboard (Streamlit) e do notebook Databricks
 
@@ -38,3 +39,4 @@ Atlas Digital de Desastres (BD_Atlas_1991_2025_v1.1), INMET dados históricos (b
 
 ## Spark
 Notebook executado no Databricks Free Edition (serverless): recalculou o Gold (45.708 linhas, 120 positivos, 135 eventos, igual ao pandas) e salvou a tabela Delta `workspace.default.gold_municipio_mes`.
+
