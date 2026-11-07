@@ -41,3 +41,31 @@ Atlas Digital de Desastres (BD_Atlas_1991_2025_v1.1), INMET dados históricos (b
 Notebook executado no Databricks Free Edition (serverless): recalculou o Gold (45.708 linhas, 120 positivos, 135 eventos, igual ao pandas) e salvou a tabela Delta `workspace.default.gold_municipio_mes`.
 
 
+
+## Evidências
+
+### Dashboard (Streamlit)
+
+**Mapa**
+
+![Dashboard - Mapa](Evidencias/Streamlit%20-%20Dashboard%20Mapa.jpeg)
+
+**Prioridades**
+
+![Dashboard - Prioridades](Evidencias/Streamlit%20-%20Dashboard%20Prioridades.jpeg)
+
+**Tempo**
+
+![Dashboard - Tempo](Evidencias/Streamlit%20-%20Dashboard%20Tempo.jpeg)
+
+**Chuva x eventos**
+
+![Dashboard - Chuva x eventos](Evidencias/Streamlit%20-%20Dashboard%20Chuva%20x%20eventos.jpeg)
+
+**Qualidade e limites**
+
+![Dashboard - Qualidade e limites](Evidencias/Streamlit%20-%20Dashboard%20Qualidade%20e%20limites.jpeg)
+
+### Experimentação Spark (Databricks)
+
+![Databricks - Notebook](Evidencias/DataBricks%20-%20Notebook%204.jpeg)
