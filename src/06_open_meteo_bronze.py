@@ -10,41 +10,55 @@ DESTINO = Path("data/bronze/open_meteo")
 DESTINO.mkdir(parents=True, exist_ok=True)
 
 ap = argparse.ArgumentParser()
-ap.add_argument("--teste", action="store_true")
+ap.add_argument("--max", type=int, default=0, help="máximo de downloads nesta execução (0 = sem limite)")
 args = ap.parse_args()
 
+dias = (pd.Timestamp(BASE["end_date"]) - pd.Timestamp(BASE["start_date"])).days + 1
+print(f"Peso estimado por requisição: ~{0.1 * dias / 14:.0f} (cota diária de 10.000 -> ~{int(10000 / (0.1 * dias / 14))} requisições/dia)")
+
 pontos = pd.read_parquet("data/silver/pontos_open_meteo.parquet")
-if args.teste:
-    pontos = pontos.groupby("tipo").head(2)
+pontos["ordem"] = pontos["tipo"].map({"estacao": 0, "municipio": 1})
+pontos = pontos.sort_values(["ordem", "id"]).reset_index(drop=True)
+pendentes = [p for p in pontos.itertuples() if not (DESTINO / f"{p.tipo}_{p.id}.json").exists()]
+print(f"Pontos: {len(pontos)} | já baixados: {len(pontos) - len(pendentes)} | pendentes: {len(pendentes)}")
 
 sess = requests.Session()
 baixados = 0
-for i, p in enumerate(pontos.itertuples(), 1):
-    arq = DESTINO / f"{p.tipo}_{p.id}.json"
-    if arq.exists():
-        continue
+for p in pendentes:
+    if args.max and baixados >= args.max:
+        break
     params = {**BASE, "latitude": round(p.lat, 4), "longitude": round(p.lon, 4)}
-    for tentativa in range(1, 7):
+    tentativa = 0
+    while True:
         r = sess.get(URL, params=params, timeout=120)
         if r.status_code == 200:
             break
-        if r.status_code == 429 or r.status_code >= 500:
-            print(f"[{i}] HTTP {r.status_code}; aguardando 65 s (tentativa {tentativa})")
-            time.sleep(65)
+        motivo = r.text[:200]
+        if r.status_code == 429:
+            m = motivo.lower()
+            if "daily" in m:
+                print(f"Limite DIÁRIO atingido após {baixados} downloads: {motivo}")
+                print("Rode novamente depois que a cota renovar; o script retoma de onde parou.")
+                raise SystemExit(0)
+            tentativa += 1
+            if tentativa > 6:
+                raise SystemExit(f"Limite persistente: {motivo}")
+            espera = 900 if "hourly" in m else 65
+            print(f"429: {motivo} | aguardando {espera} s")
+            time.sleep(espera)
             continue
-        raise SystemExit(f"Erro HTTP {r.status_code}: {r.text[:300]}")
-    else:
-        raise SystemExit("Limite atingido. Rode novamente mais tarde: o script retoma de onde parou.")
+        if r.status_code >= 500 and tentativa < 5:
+            tentativa += 1
+            time.sleep(10 * tentativa)
+            continue
+        raise SystemExit(f"Erro HTTP {r.status_code}: {motivo}")
     corpo = {"_meta": {"url": r.url, "baixado_em_utc": dt.datetime.now(dt.timezone.utc).isoformat(),
                        "tipo": p.tipo, "id": str(p.id), "nome": p.nome,
                        "sha256": hashlib.sha256(r.content).hexdigest()},
              "resposta": r.json()}
-    arq.write_text(json.dumps(corpo), encoding="utf-8")
+    (DESTINO / f"{p.tipo}_{p.id}.json").write_text(json.dumps(corpo), encoding="utf-8")
     baixados += 1
-    if args.teste:
-        d = corpo["resposta"]
-        s = pd.Series(d["daily"]["precipitation_sum"], dtype="float")
-        print(f"{p.tipo} {p.id} {p.nome}: grade=({d['latitude']}, {d['longitude']}) "
-              f"alt={d.get('elevation')} dias={len(s)} nulos={s.isna().sum()} total={s.sum():.0f} mm")
+    if baixados % 25 == 0:
+        print(f"{baixados} downloads nesta execução")
     time.sleep(1.0)
-print("Concluído. Novos arquivos:", baixados, "| total na pasta:", len(list(DESTINO.glob('*.json'))))
+print("Concluído. Novos arquivos:", baixados, "| total na pasta:", len(list(DESTINO.glob("*.json"))))
