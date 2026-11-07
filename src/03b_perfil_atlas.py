@@ -1,0 +1,11 @@
+﻿import pandas as pd
+df = pd.read_parquet("data/silver/atlas_sp_hidro_geo.parquet")
+ev = pd.to_datetime(df["Data_Evento"], errors="coerce")
+reg = pd.to_datetime(df["Data_Registro"], errors="coerce")
+print("Protocolos duplicados:", df["Protocolo_S2iD"].duplicated().sum())
+print("Data_Evento nula:", ev.isna().sum())
+print("Cod_IBGE_Mun:", df["Cod_IBGE_Mun"].dtype, df["Cod_IBGE_Mun"].head(3).tolist())
+print("Municípios distintos com registro:", df["Cod_IBGE_Mun"].nunique(), "de 645")
+print("\nRegistros por ano do evento:"); print(ev.dt.year.value_counts().sort_index())
+print("\nDias entre evento e registro:"); print((reg - ev).dt.days.describe())
+print("\nStatus:"); print(df["Status"].value_counts())
